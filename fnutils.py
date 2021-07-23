@@ -81,8 +81,6 @@ def  read_bbstr(f ):
 
 def  read_label(f ):
     ret = ""
-    #f = 'badf2d31cdbd.png'
-    #folder = './gradio-siim-app/test/labels/'
     label_folder   = './labels/'
     with open(label_folder + f.split('.')[0] + "-label.txt", 'r') as fl:
         ret = (fl.readline())
@@ -128,7 +126,6 @@ def save_original_img_with_bb(f_with_ext
                                , image_dir 
                              ):
     f = f_with_ext
-    #f = 'fa5803549fe5.png'
     f_without_ext = f.split('.')[0]
     bbstr = read_bbstr(f.split('.')[0])
     lbl = read_label(f.split('.')[0])
@@ -205,9 +202,6 @@ def image_predict_and_debug(file):
     return(orig_file_name, pred_file_name)
 
 def image_predict(file):
-    #im = Image.open(file)
-    #orig_file = get_orig_file_name(file.name)
-    #print("file.name", file.name)
     pred_file_name = save_predicted_img_with_bb_new(orig_file , file.name ,  target_dir, image_dir)
     return(pred_file_name)
 
