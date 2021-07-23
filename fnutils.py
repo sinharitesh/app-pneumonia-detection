@@ -8,6 +8,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib import patches, patheffects
 import tqdm
+import random
+import string
 
 
 label_folder   =   './labels/'
@@ -91,6 +93,7 @@ def  read_label(f ):
 def get_pred_bb_label_from_df(df_results):
     bbs = []
     lbls = []
+    probs = []
     for i in range(df_results.shape[0]):
         bbxyxy = []
         xmin = df_results['xmin'][i]
@@ -102,9 +105,11 @@ def get_pred_bb_label_from_df(df_results):
         bbxyxy.append(xmax)
         bbxyxy.append(ymax)
         label = df_results['name'][i]
+        prob = round(float(df_results['confidence'][i]),2)
         bbs.append(bbxyxy)
-        lbls.append(label)   
-    return(bbs, lbls)
+        lbls.append(label)
+        probs.append(prob)
+    return(bbs, lbls, probs)
 
 def get_orig_file_name(fname):
 # This function is required for gradio uploads.
@@ -130,7 +135,6 @@ def save_original_img_with_bb(f_with_ext
     bboxes = get_bboxes_xxyy(bbstr)
     im = Image.open(image_dir + f)
     file_target = f"{target_dir}{f_without_ext}-orig.png"
-    if len(bboxes) > 1: print("O:", len(bboxes), f_with_ext)
     figsize = (10,10)
     _, ax = plt.subplots(figsize = figsize)
     save_image_bb(im, ax , bboxes, lbl, save_file = file_target )
@@ -146,13 +150,24 @@ def get_prediction_df(image_file):
             df_results = df_results.append(df_temp)
     return(df_results)
 
-def save_predicted_img_with_bb(f_with_ext, uploaded_file
+
+def save_predicted_img_with_bb_new( f_with_ext, uploaded_file
                               , target_dir 
                                , image_dir ):
     f = f_with_ext
     f_without_ext = f.split('.')[0]
     df_results = get_prediction_df(uploaded_file)
-    bboxes, labels = get_pred_bb_label_from_df(df_results)
+    bboxes, labels, probs = get_pred_bb_label_from_df(df_results)
+    # creating output string #
+    str_output = ""
+    try:
+        lblstr = (' ').join(labels)
+        strprobs = [str(prob) for prob in probs ]
+        probstr = (' ').join((strprobs))
+        str_output = lblstr + " " + probstr;
+    except:
+        pass
+    
     im = Image.open(uploaded_file)
     file_target = f"{target_dir}{f_without_ext}-pred.png"
     lbl = ""
@@ -163,18 +178,37 @@ def save_predicted_img_with_bb(f_with_ext, uploaded_file
     figsize = (10,10)
     _, ax = plt.subplots(figsize = figsize)
     save_image_bb(im, ax , bboxes, lbl, save_file = file_target )
-    #if len(bboxes) > 1: print("P", len(bboxes), f_with_ext)
-    return(file_target)
+    return(file_target, str_output)
+
+
+def generate_temp_filename() -> str:
+    random_string = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    return(random_string)
+
+
+def image_predict_new(im):
+    img = Image.fromarray(im)
+    tmp_file_name = generate_temp_filename() + ".png"
+    tmp_file_path = f"/tmp/{tmp_file_name}"
+    img.save(tmp_file_path)
+    pred_file_name, labelstr = save_predicted_img_with_bb_new( tmp_file_name , tmp_file_path ,  target_dir, image_dir)
+    print('pred_file_name', pred_file_name, tmp_file_path, labelstr)
+    imret = Image.open(pred_file_name)
+    return(imret, labelstr)
+
 
 def image_predict_and_debug(file):
     im = Image.open(file)
     orig_file = get_orig_file_name(file.name)
     orig_file_name = save_original_img_with_bb(orig_file, target_dir, image_dir)
-    pred_file_name = save_predicted_img_with_bb(orig_file , file.name ,  target_dir, image_dir)
+    pred_file_name, labelstr = save_predicted_img_with_bb_new(orig_file , file.name ,  target_dir, image_dir)
     return(orig_file_name, pred_file_name)
 
 def image_predict(file):
-    im = Image.open(file)
-    orig_file = get_orig_file_name(file.name)
-    pred_file_name = save_predicted_img_with_bb(orig_file , file.name ,  target_dir, image_dir)
+    #im = Image.open(file)
+    #orig_file = get_orig_file_name(file.name)
+    #print("file.name", file.name)
+    pred_file_name = save_predicted_img_with_bb_new(orig_file , file.name ,  target_dir, image_dir)
     return(pred_file_name)
+
+
