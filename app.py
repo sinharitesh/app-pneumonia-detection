@@ -38,7 +38,7 @@ if __name__ == "__main__":
             gr.inputs.Image(label = "input_image"), 
             outputs,
             flagging_options = ["bounding boxes missed","label incorrect"],
-            examples = [["images/28e9e044dc31.png"]  ,["images/6fb675554ba4.png"]],
+            examples = [["images/sample001.png"]  ,["images/sample005.png"]],
             capture_session=True)
 
         iface.launch(share = True)

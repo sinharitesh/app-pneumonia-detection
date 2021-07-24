@@ -72,8 +72,6 @@ def bb_wh_from_xxyy(a): return np.array([a[0],a[1],a[2]-a[0], a[3]-a[1]])
 
 def  read_bbstr(f ):
     ret = ""
-    #f = 'badf2d31cdbd.png'
-    #folder = './gradio-siim-app/test/labels/'
     label_folder   = './labels/'
     with open(label_folder + f.split('.')[0] + "-boundingbox.txt", 'r') as fl:
         ret = (fl.readline())
@@ -110,10 +108,13 @@ def get_pred_bb_label_from_df(df_results):
     return(bbs, lbls, probs)
 
 def get_orig_file_name(fname):
-# This function is required for gradio uploads.
-# When a file is loaded , the name is changed.
-# this function reqturns the orig file name which
-# is useful in predict and debug scenario.
+
+    """
+     This function is required for gradio uploads.
+     When a file is loaded , the name is changed.
+     this function reqturns the orig file name which
+     is useful in predict and debug scenario.
+    """
     fname = fname.replace("/tmp/", "")
     ext = fname.split(".")[-1]
     temp = fname.split(".")[-2]
