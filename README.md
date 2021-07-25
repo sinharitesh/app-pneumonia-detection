@@ -1,7 +1,10 @@
 # Pneumonia Detection App
 
-Detect Pneumonia in Chest X Rays using a model built with Yolov5. The application is capable of detecting and showing the results of an Object Detection model trained with Yolov5.
-Pneumonia in Chest X Rays. The dataset used here is BIMCV COVID-19+.
+Detect Pneumonia in Chest X Rays using a model built with Yolov5 (https://github.com/ultralytics/yolov5). The application is capable of detecting and showing the results of an Object Detection model trained with Yolov5. The application uses Gradio (https://gradio.app/) for developing the UI. This is suitable for the scenario for quick experimentation when we need to make our model(s) available to end users.
+
+The dataset used here is BIMCV COVID-19+ (https://www.kaggle.com/c/siim-covid19-detection/data).
+
+Following is a snapshot of the interface.
 
 ![Object_Detection](./pneumonia-github-image-1.png)
 
