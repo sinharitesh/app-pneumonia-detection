@@ -26,6 +26,14 @@ python app.py
 
 python app.py --mode debug
 
+Note: The app has sample image files provided, so if you are looking to run this yourself , just go and follow the above steps, you will have this app running in no time.
+
+The interface looks as following when it is run in debug mode.
+
+
+![Debug_Mode](./pneumonia-github-debug-mode.jpg)
+
+
 ## Citation
 
 ### Dataset
